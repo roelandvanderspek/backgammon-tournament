@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Join a game – Backgammon Tournament</title>
+<meta name="description" content="Open a friend's room in the Backgammon Tournament app for iPhone and iPad.">
+<meta name="robots" content="noindex">
+<style>
+  :root {
+    --page: #f6f4ee;
+    --ink: #1c2420;
+    --muted: #5c6862;
+    --rule: #d9d5c8;
+    --accent: #0f5a3f;
+    --on-accent: #ffffff;
+    --card: #ffffff;
+    --tile: #f1ede0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page: #0e1512;
+      --ink: #e9ece8;
+      --muted: #9aa8a1;
+      --rule: #26332d;
+      --accent: #d9b25a;
+      --on-accent: #1a1405;
+      --card: #141d19;
+      --tile: #1c2823;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  main {
+    max-width: 30rem;
+    margin: 0 auto;
+    padding: 3rem 1.25rem 4rem;
+    text-align: center;
+  }
+  .app { color: var(--accent); font-weight: 600; letter-spacing: 0.02em; margin: 0 0 0.25rem; }
+  h1 { font-family: Georgia, "Times New Roman", serif; font-size: 2rem; line-height: 1.2; margin: 0 0 0.75rem; text-wrap: balance; }
+  p { margin: 0 0 1rem; }
+  .muted { color: var(--muted); }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 16px;
+    padding: 1.5rem 1.25rem;
+    margin: 1.75rem 0;
+  }
+  .label { color: var(--muted); font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; margin: 0 0 0.6rem; }
+  .code { display: flex; justify-content: center; gap: 0.4rem; margin: 0 0 1.4rem; }
+  .code span {
+    width: 2.6rem; height: 3.1rem;
+    display: grid; place-items: center;
+    background: var(--tile);
+    border: 1px solid var(--rule);
+    border-radius: 9px;
+    font: 700 1.5rem/1 ui-rounded, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  }
+  .button {
+    display: block;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 999px;
+    padding: 0.85rem 1.25rem;
+  }
+  a { color: var(--accent); }
+  .steps { text-align: left; margin: 0; padding-left: 1.25rem; }
+  .steps li { margin-bottom: 0.4rem; }
+  footer { border-top: 1px solid var(--rule); margin-top: 2.5rem; padding-top: 1.25rem; color: var(--muted); font-size: 0.95rem; }
+</style>
+</head>
+<body>
+<main>
+  <p class="app">Backgammon Tournament</p>
+  <h1 id="title">You are invited to a game</h1>
+  <p class="muted" id="lead">A friend opened a room for the two of you.</p>
+
+  <div class="card" id="invitation" hidden>
+    <p class="label">Room</p>
+    <div class="code" id="code" aria-label="Room code"></div>
+    <a class="button" id="open" href="#">Open in Backgammon Tournament</a>
+  </div>
+
+  <div class="card" id="missing" hidden>
+    <p>This link has no room code in it. Ask your friend to send the invitation again.</p>
+  </div>
+
+  <p class="muted">Don't have the game yet?</p>
+  <ol class="steps muted">
+    <li><a href="https://apps.apple.com/app/id6833856542">Get Backgammon Tournament on the App Store</a>.</li>
+    <li>Come back to this page and press the button, or choose Play a Friend in the game and type the room code.</li>
+  </ol>
+
+  <footer>
+    <a href="support.html">Support</a> · <a href="privacy.html">Privacy</a>
+  </footer>
+</main>
+<script>
+  // The room code comes from the link. Only the game's own letters and digits are kept.
+  (function () {
+    var raw = new URLSearchParams(location.search).get("room") || "";
+    var code = raw.toUpperCase().replace(/[^ABCDEFGHJKLMNPQRSTUVWXYZ23456789]/g, "").slice(0, 5);
+    if (code.length !== 5) {
+      document.getElementById("missing").hidden = false;
+      return;
+    }
+    var tiles = document.getElementById("code");
+    code.split("").forEach(function (letter) {
+      var tile = document.createElement("span");
+      tile.textContent = letter;
+      tiles.appendChild(tile);
+    });
+    var link = "backgammontournament://room/" + code;
+    document.getElementById("open").href = link;
+    document.getElementById("invitation").hidden = false;
+    // Try straight away: with the game installed, the phone offers to open it.
+    setTimeout(function () { location.href = link; }, 400);
+  })();
+</script>
+</body>
+</html>
